@@ -1,3 +1,4 @@
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Box, Button, Typography } from "@mui/material";
 import React from "react";
 
@@ -13,6 +14,17 @@ interface EventDetailsProps {
 const EventDetails: React.FC<EventDetailsProps> = ({ event, backToList }) => {
   return (
     <Box display="flex" flexDirection="column" padding={3}>
+      <Box display="flex" justifyContent="flex-start" alignItems="center" m={2}>
+        <Button
+          startIcon={<ArrowBackIcon color="inherit" />}
+          onClick={backToList}
+          variant="contained"
+          color="secondary"
+          style={{ boxShadow: "0 2px 5px rgba(0,0,0,0.2)" }}
+        >
+          Voltar
+        </Button>
+      </Box>
       <Typography variant="h4" marginBottom={2}>
         {event.title}
       </Typography>
@@ -22,10 +34,6 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event, backToList }) => {
       <Typography variant="body1" marginBottom={3}>
         {event.description}
       </Typography>
-
-      <Button variant="contained" onClick={backToList}>
-        Voltar para a lista
-      </Button>
     </Box>
   );
 };
