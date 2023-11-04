@@ -8,11 +8,20 @@ import {
 } from "@mui/material";
 import React, { useState } from "react";
 import EventDetails from "../components/EventDetails";
-import EventList from "../components/EventList";
+import EventList, { AppEvent, fetchEvents } from "../components/EventList";
 import CreateEventModal from "./CreateEventModal";
 import ParticipateModal from "./CreateParticipateModal";
 
 const HomePage = () => {
+  const [events, setEvents] = useState<AppEvent[]>([]);
+
+  const refreshEvents = async () => {
+    const newEvents = await fetchEvents();
+    if (newEvents) {
+      setEvents(newEvents);
+    }
+  };
+
   const [searchText, setSearchText] = useState("");
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -102,7 +111,11 @@ const HomePage = () => {
           overflow="auto"
         >
           {!viewDetails ? (
-            <EventList onEventClick={handleEventClick} />
+            <EventList
+              onEventClick={handleEventClick}
+              events={events}
+              setEvents={setEvents}
+            />
           ) : (
             <EventDetails event={selectedEvent} backToList={handleBackToList} />
           )}
@@ -118,7 +131,11 @@ const HomePage = () => {
               >
                 Criar evento
               </Button>
-              <CreateEventModal isOpen={isModalOpen} closeModal={closeModal} />
+              <CreateEventModal
+                isOpen={isModalOpen}
+                closeModal={closeModal}
+                refreshEvents={refreshEvents}
+              />
             </>
           ) : (
             <>
