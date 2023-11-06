@@ -7,16 +7,18 @@ import {
   ListItemText,
   Paper,
   Typography,
+  useTheme,
 } from "@mui/material";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 
 interface EventDetailsProps {
-  event: EventDetails;
+  event: EventDetailsData;
   onBack: () => void;
 }
 
-interface EventDetails {
+interface EventDetailsData {
+  id: number;
   value: number;
   address: string;
   date: string;
@@ -28,18 +30,17 @@ interface Participant {
   name: string;
 }
 
-const EventDetails = ({ event, onBack }: EventDetailsProps) => {
+const EventDetails: React.FC<EventDetailsProps> = ({ event, onBack }) => {
+  const theme = useTheme();
   const [participants, setParticipants] = useState<Participant[]>([]);
 
   useEffect(() => {
     axios
-      .get("/get-participants")
-      .then((response) => {
-        setParticipants(response.data);
-      })
-      .catch((error) => {
-        console.error("Error fetching data: ", error);
-      });
+      .get(
+        `${process.env.REACT_APP_API_URL_PROD}/event/${event.id}/participants`
+      )
+      .then((response) => setParticipants(response.data))
+      .catch((error) => console.error("Error fetching data: ", error));
   }, []);
 
   if (!event) {
@@ -47,14 +48,25 @@ const EventDetails = ({ event, onBack }: EventDetailsProps) => {
   }
 
   return (
-    <Grid container spacing={2}>
-      <Grid item xs={12}>
-        <IconButton onClick={onBack}>
+    <Grid container spacing={2} sx={{ padding: theme.spacing(2) }}>
+      <Grid
+        item
+        xs={12}
+        sx={{ position: "relative", paddingBottom: theme.spacing(4) }}
+      >
+        <IconButton
+          onClick={onBack}
+          sx={{
+            position: "absolute",
+            top: theme.spacing(1),
+            left: theme.spacing(2),
+          }}
+        >
           <ArrowBackIcon />
         </IconButton>
       </Grid>
       <Grid item xs={12} sm={6}>
-        <Paper elevation={3}>
+        <Paper elevation={3} sx={{ maxHeight: 300, overflow: "auto" }}>
           <List>
             {participants.map((participant) => (
               <ListItem key={participant.id}>
@@ -65,13 +77,17 @@ const EventDetails = ({ event, onBack }: EventDetailsProps) => {
         </Paper>
       </Grid>
       <Grid item xs={12} sm={6}>
-        <Typography variant="subtitle1">
-          Value per person: R$ {event.value.toFixed(2)}
+        <Typography variant="subtitle1" gutterBottom>
+          Valor por pessoa: R$ {event.value.toFixed(2)}
         </Typography>
-        <Typography variant="subtitle1">Address: {event.address}</Typography>
-        <Typography variant="subtitle1">Date: {event.date}</Typography>
-        <Typography variant="subtitle1">
-          People Count: {event.people_count}
+        <Typography variant="subtitle1" gutterBottom>
+          Endereço: {event.address}
+        </Typography>
+        <Typography variant="subtitle1" gutterBottom>
+          Data: {new Date(event.date).toLocaleDateString("pt-BR")}
+        </Typography>
+        <Typography variant="subtitle1" gutterBottom>
+          Quantidade de Pessoas: {event.people_count}
         </Typography>
       </Grid>
     </Grid>

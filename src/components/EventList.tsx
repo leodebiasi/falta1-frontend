@@ -90,7 +90,9 @@ interface Props {
 
 export const fetchEvents = async () => {
   try {
-    const response = await fetch("http://localhost:8080/get-events");
+    const response = await fetch(
+      `${process.env.REACT_APP_API_URL_PROD}/get-events`
+    );
     const data = await response.json();
     return data;
   } catch (error) {

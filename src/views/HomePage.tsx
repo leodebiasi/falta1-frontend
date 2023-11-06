@@ -100,6 +100,7 @@ const HomePage = () => {
           borderRadius="5px"
           mb={2}
           overflow="auto"
+          maxHeight="calc(100vh - 300px)"
         >
           {!viewDetails ? (
             <EventList

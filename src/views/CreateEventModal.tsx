@@ -32,11 +32,14 @@ const CreateEventModal: React.FC<StyledModalProps> = ({
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.post("http://localhost:8080/create-event", {
-        ...eventData,
-        value: parseFloat(eventData.value),
-        people_count: parseInt(eventData.people_count, 10),
-      });
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL_PROD}/create-event`,
+        {
+          ...eventData,
+          value: parseFloat(eventData.value),
+          people_count: parseInt(eventData.people_count, 10),
+        }
+      );
 
       if (response.status === 201) {
         alert("Evento criado com sucesso!");
