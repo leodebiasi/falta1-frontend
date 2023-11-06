@@ -15,7 +15,7 @@ interface StyledModalProps {
   refreshEvents: () => void; // Adicionado para permitir a atualização da lista de eventos após a criação
 }
 
-const StyledModal: React.FC<StyledModalProps> = ({
+const CreateEventModal: React.FC<StyledModalProps> = ({
   isOpen,
   closeModal,
   refreshEvents,
@@ -141,4 +141,4 @@ const StyledModal: React.FC<StyledModalProps> = ({
   );
 };
 
-export default StyledModal;
+export default CreateEventModal;
