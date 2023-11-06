@@ -1,40 +1,81 @@
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import { Box, Button, Typography } from "@mui/material";
-import React from "react";
+import {
+  Grid,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+  Paper,
+  Typography,
+} from "@mui/material";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
 
 interface EventDetailsProps {
-  event: {
-    title: string;
-    date: string;
-    description: string;
-  };
-  backToList: () => void;
+  event: EventDetails;
+  onBack: () => void;
 }
 
-const EventDetails: React.FC<EventDetailsProps> = ({ event, backToList }) => {
+interface EventDetails {
+  value: number;
+  address: string;
+  date: string;
+  people_count: number;
+}
+
+interface Participant {
+  id: string | number;
+  name: string;
+}
+
+const EventDetails = ({ event, onBack }: EventDetailsProps) => {
+  const [participants, setParticipants] = useState<Participant[]>([]);
+
+  useEffect(() => {
+    axios
+      .get("/get-participants")
+      .then((response) => {
+        setParticipants(response.data);
+      })
+      .catch((error) => {
+        console.error("Error fetching data: ", error);
+      });
+  }, []);
+
+  if (!event) {
+    return null;
+  }
+
   return (
-    <Box display="flex" flexDirection="column" padding={3}>
-      <Box display="flex" justifyContent="flex-start" alignItems="center" m={2}>
-        <Button
-          startIcon={<ArrowBackIcon color="inherit" />}
-          onClick={backToList}
-          variant="contained"
-          color="secondary"
-          style={{ boxShadow: "0 2px 5px rgba(0,0,0,0.2)" }}
-        >
-          Voltar
-        </Button>
-      </Box>
-      <Typography variant="h4" marginBottom={2}>
-        {event.title}
-      </Typography>
-      <Typography variant="subtitle1" marginBottom={2}>
-        {event.date}
-      </Typography>
-      <Typography variant="body1" marginBottom={3}>
-        {event.description}
-      </Typography>
-    </Box>
+    <Grid container spacing={2}>
+      <Grid item xs={12}>
+        <IconButton onClick={onBack}>
+          <ArrowBackIcon />
+        </IconButton>
+        <Typography variant="h5">Event Details</Typography>
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        <Paper elevation={3}>
+          <List>
+            {participants.map((participant) => (
+              <ListItem key={participant.id}>
+                <ListItemText primary={participant.name} />
+              </ListItem>
+            ))}
+          </List>
+        </Paper>
+      </Grid>
+      <Grid item xs={12} sm={6}>
+        <Typography variant="subtitle1">
+          Value per person: R$ {event.value.toFixed(2)}
+        </Typography>
+        <Typography variant="subtitle1">Address: {event.address}</Typography>
+        <Typography variant="subtitle1">Date: {event.date}</Typography>
+        <Typography variant="subtitle1">
+          People Count: {event.people_count}
+        </Typography>
+      </Grid>
+    </Grid>
   );
 };
 

@@ -117,7 +117,7 @@ const HomePage = () => {
               setEvents={setEvents}
             />
           ) : (
-            <EventDetails event={selectedEvent} backToList={handleBackToList} />
+            <EventDetails event={selectedEvent} onBack={handleBackToList} />
           )}
         </Box>
         <Box display="flex" justifyContent="center" mb={4}>
