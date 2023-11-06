@@ -52,7 +52,6 @@ const EventDetails = ({ event, onBack }: EventDetailsProps) => {
         <IconButton onClick={onBack}>
           <ArrowBackIcon />
         </IconButton>
-        <Typography variant="h5">Event Details</Typography>
       </Grid>
       <Grid item xs={12} sm={6}>
         <Paper elevation={3}>

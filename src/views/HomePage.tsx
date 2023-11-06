@@ -1,14 +1,8 @@
-import {
-  Box,
-  Button,
-  Container,
-  Grid,
-  TextField,
-  Typography,
-} from "@mui/material";
+import { Box, Button, Container, Grid, TextField } from "@mui/material";
 import React, { useState } from "react";
 import EventDetails from "../components/EventDetails";
 import EventList, { AppEvent, fetchEvents } from "../components/EventList";
+import Header from "../components/Header";
 import CreateEventModal from "./CreateEventModal";
 import ParticipateModal from "./CreateParticipateModal";
 
@@ -77,14 +71,11 @@ const HomePage = () => {
           display="flex"
           justifyContent="center"
           alignItems="center"
-          bgcolor="primary.main"
           height={100}
           mb={2}
           boxShadow={3}
         >
-          <Typography variant="h3" color="textPrimary">
-            FALTA1
-          </Typography>
+          <Header />
         </Box>
 
         <Box display="flex" justifyContent="center" alignItems="center" mb={2}>

@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import React from "react";
 
 const Header: React.FC = () => {
@@ -7,13 +7,14 @@ const Header: React.FC = () => {
       display="flex"
       justifyContent="center"
       alignItems="center"
-      bgcolor="secondary.main"
       height={100}
-      mb={4}
+      mb={1}
     >
-      <Typography variant="h3" color="textPrimary">
-        FALTA1
-      </Typography>
+      <img
+        src="/falta1_logo.png"
+        alt="Logo"
+        style={{ maxHeight: "100%", maxWidth: "100%" }}
+      />
     </Box>
   );
 };
