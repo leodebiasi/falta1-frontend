@@ -16,9 +16,7 @@ const HomePage = () => {
   };
 
   const [searchText, setSearchText] = useState("");
-
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
   const [viewDetails, setViewDetails] = useState<boolean>(false);
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
 
@@ -48,13 +46,9 @@ const HomePage = () => {
     <Container
       component="main"
       maxWidth="xl"
-      style={{
-        height: "100vh",
-        overflow: "hidden",
-        backgroundColor: "#f3f3f3",
-      }}
+      sx={{ height: "100vh", overflow: "hidden", backgroundColor: "#f3f3f3" }}
     >
-      <Grid container direction="column" style={{ height: "100%" }}>
+      <Grid container direction="column" sx={{ height: "100%" }}>
         <Box
           display="flex"
           justifyContent="center"
@@ -73,20 +67,22 @@ const HomePage = () => {
             sx={{ maxWidth: "70%" }}
             onChange={(e) => handleSearch(e.target.value)}
           />
-        </Box>        
+        </Box>
         <Box
           flexGrow={1}
-          display="flex"
-          flexDirection="column"
-          borderTop={1}
-          borderRight={1}
-          borderBottom={1}
-          borderLeft={1}
-          borderColor="grey.400"
-          borderRadius="5px"
-          mb={2}
-          overflow="auto"
-          maxHeight="calc(100vh - 300px)"
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            borderTop: 1,
+            borderRight: 1,
+            borderBottom: 1,
+            borderLeft: 1,
+            borderColor: "grey.400",
+            borderRadius: "5px",
+            mb: 2,
+            overflow: "auto",
+            maxHeight: "calc(100vh - 300px)",
+          }}
         >
           {!viewDetails ? (
             <EventList

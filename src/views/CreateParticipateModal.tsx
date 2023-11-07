@@ -14,7 +14,7 @@ import {
   Typography,
 } from "@mui/material";
 import QRCode from "qrcode.react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 interface ParticipateModalProps {
   isOpen: boolean;
@@ -30,6 +30,37 @@ const ParticipateModal: React.FC<ParticipateModalProps> = ({
   const [activeStep, setActiveStep] = useState(0);
   const [name, setName] = useState("");
   const [brCode, setBrCode] = useState("");
+  const [ws, setWs] = useState<WebSocket | null>(null);
+
+  useEffect(() => {
+    if (isOpen && activeStep === 1) {
+      const websocket = new WebSocket("wss://falta1.onrender.com/ws");
+      setWs(websocket);
+
+      websocket.onopen = () => {
+        console.log("WebSocket connection established");
+      };
+
+      websocket.onmessage = (event) => {
+        if (event.data === "paid") {
+          alert("Pagamento confirmado!");
+          closeModal();
+        }
+      };
+
+      websocket.onerror = (event) => {
+        console.error("WebSocket error:", event);
+      };
+
+      websocket.onclose = (event) => {
+        console.log("WebSocket connection closed:", event);
+      };
+
+      return () => {
+        websocket.close();
+      };
+    }
+  }, [isOpen, activeStep, closeModal]);
 
   const fetchBrCode = async () => {
     const response = await fetch(
@@ -53,7 +84,7 @@ const ParticipateModal: React.FC<ParticipateModalProps> = ({
   return (
     <Dialog open={isOpen} onClose={closeModal} fullWidth maxWidth="sm">
       <DialogTitle>
-        Confirmação
+        Participar do Evento
         <IconButton
           style={{ position: "absolute", right: "8px", top: "8px" }}
           onClick={closeModal}
@@ -91,18 +122,23 @@ const ParticipateModal: React.FC<ParticipateModalProps> = ({
         )}
       </DialogContent>
       <DialogActions
-        style={{ justifyContent: activeStep === 0 ? "flex-end" : "flex-start" }}
+        style={{
+          justifyContent: activeStep === 0 ? "flex-end" : "space-between",
+        }}
       >
-        {activeStep === 0 && (
-          <Button variant="contained" color="primary" onClick={handleNext}>
-            Avançar
-          </Button>
-        )}
-        {activeStep === 1 && (
+        {activeStep > 0 && (
           <Button variant="contained" color="primary" onClick={handleBack}>
             Voltar
           </Button>
         )}
+        <Button
+          variant="contained"
+          color="primary"
+          onClick={handleNext}
+          disabled={activeStep === 1}
+        >
+          {activeStep === 0 ? "Avançar" : "Aguardando pagamento..."}
+        </Button>
       </DialogActions>
     </Dialog>
   );

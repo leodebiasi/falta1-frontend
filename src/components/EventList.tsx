@@ -1,5 +1,5 @@
 import { Avatar, Box, Card, Typography } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 
 export interface AppEvent {
   id: string;
@@ -15,21 +15,26 @@ export interface AppEvent {
 }
 
 function formatValue(value: number, peopleCount: number) {
-  const perPersonValue = (value / peopleCount).toFixed(2);
-  return `R$ ${perPersonValue}`;
+  return `R$ ${(value / peopleCount).toFixed(2)}`;
 }
 
 const formatDate = (dateString: string) => {
   const date = new Date(dateString);
-  const day = date.toLocaleDateString("pt-BR", { day: "2-digit" });
-  const month = date
-    .toLocaleDateString("pt-BR", { month: "short" })
-    .toUpperCase()
-    .replace(".", "");
-  return { day, month };
+  return {
+    day: date.toLocaleDateString("pt-BR", { day: "2-digit" }),
+    month: date
+      .toLocaleDateString("pt-BR", { month: "short" })
+      .toUpperCase()
+      .replace(".", ""),
+  };
 };
 
-function EventCard({ event, onEventClick }: any) {
+interface EventCardProps {
+  event: AppEvent;
+  onEventClick: (event: AppEvent) => void;
+}
+
+function EventCard({ event, onEventClick }: EventCardProps) {
   const { day, month } = formatDate(event.date);
   return (
     <Card
@@ -43,23 +48,18 @@ function EventCard({ event, onEventClick }: any) {
         padding: "1rem",
       }}
     >
-      {/* Avatar ou imagem à esquerda */}
       <Avatar
         src={event.image}
         alt={event.description}
         variant="rounded"
         style={{ width: 50, height: 50 }}
       />
-
-      {/* Detalhes do evento */}
       <Box flex={1} marginLeft={2}>
         <Typography variant="h6">{event.description}</Typography>
         <Typography variant="subtitle1">
           {formatValue(event.value, event.people_count)}
         </Typography>
       </Box>
-
-      {/* Data à direita */}
       <Box
         sx={{
           display: "flex",
@@ -95,27 +95,21 @@ export const fetchEvents = async () => {
     const response = await fetch(
       `${process.env.REACT_APP_API_URL_PROD}/get-events`
     );
-    const data = await response.json();
-    return data;
+    if (!response.ok) throw new Error("Response not ok");
+    return await response.json();
   } catch (error) {
     console.error("Erro ao buscar eventos:", error);
   }
 };
 
 const EventList: React.FC<Props> = ({ onEventClick, events, setEvents }) => {
-  const [localEvents, setLocalEvents] = useState<AppEvent[]>([]); // Renomeado para 'localEvents'
-
   useEffect(() => {
-    fetchEvents().then((data) => {
-      if (data) {
-        setLocalEvents(data);
-      }
-    });
+    fetchEvents().then(setEvents);
   }, []);
 
   return (
     <div>
-      {localEvents.map((event) => (
+      {events.map((event) => (
         <EventCard key={event.id} event={event} onEventClick={onEventClick} />
       ))}
     </div>

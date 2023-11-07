@@ -31,8 +31,8 @@ interface EventDetailsData {
 }
 
 interface Participant {
-  id: string | number;
-  name: string;
+  tx_id: string;
+  nome: string;
 }
 
 function formatValue(value: number, peopleCount: number) {
@@ -43,6 +43,9 @@ function formatValue(value: number, peopleCount: number) {
 const EventDetails: React.FC<EventDetailsProps> = ({ event, onBack }) => {
   const theme = useTheme();
   const [participants, setParticipants] = useState<Participant[]>([]);
+  const [playersMissing, setPlayersMissing] = useState<number>(
+    event.people_count
+  );
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [isParticipateModalOpen, setIsParticipateModalOpen] =
     useState<boolean>(false);
@@ -67,9 +70,14 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event, onBack }) => {
       .get(
         `${process.env.REACT_APP_API_URL_PROD}/event/${event.id}/participants`
       )
-      .then((response) => setParticipants(response.data))
+      .then((response) => {
+        setParticipants(response.data.participants);
+        setPlayersMissing(
+          event.people_count - response.data.participants.length
+        );
+      })
       .catch((error) => console.error("Error fetching data: ", error));
-  }, [event.id]);
+  }, [event.id, event.people_count]);
 
   if (!event) {
     return null;
@@ -125,20 +133,27 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event, onBack }) => {
           elevation={3}
           sx={{ height: "calc(100vh - 500px)", overflow: "auto" }}
         >
-          {" "}
           <List>
-            {participants.map((participant) => (
-              <ListItem key={participant.id}>
-                <ListItemText primary={participant.name} />
+            {participants.map((participant, index) => (
+              <ListItem key={participant.tx_id}>
+                <ListItemText primary={`${index + 1}. ${participant.nome}`} />
               </ListItem>
             ))}
           </List>
         </Paper>
+        {playersMissing > 0 && (
+          <Typography
+            variant="subtitle1"
+            sx={{ marginTop: theme.spacing(1), textAlign: "left" }}
+          >
+            Faltam {playersMissing} jogadores.
+          </Typography>
+        )}
       </Grid>
       <Grid item xs={12} sm={6} sx={{ textAlign: "left" }}>
         <Typography variant="subtitle1" gutterBottom component="div">
           <b style={{ fontWeight: "bold" }}>Valor por pessoa:</b>{" "}
-          <span>R$ {event.value.toFixed(2)}</span>
+          <span>{formatValue(event.value, event.people_count)}</span>
         </Typography>
 
         <Typography variant="subtitle1" gutterBottom component="div">
