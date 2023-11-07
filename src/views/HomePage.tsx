@@ -28,8 +28,6 @@ const theme = createTheme({
 
 export default function HomePage() {
   const [events, setEvents] = useState<AppEvent[]>([]);
-  const [viewDetails, setViewDetails] = useState<boolean>(false);
-  const [selectedEvent, setSelectedEvent] = useState<any>(null);
   const refreshEvents = async () => {
     const newEvents = await fetchEvents();
     if (newEvents) {
@@ -40,11 +38,6 @@ export default function HomePage() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const closeModal = () => {
     setIsModalOpen(false);
-  };
-
-  const handleEventClick = (event: any) => {
-    setSelectedEvent(event);
-    setViewDetails(true);
   };
 
   return (
@@ -110,11 +103,7 @@ export default function HomePage() {
                 mt: 2,
               }}
             >
-              <EventList
-                onEventClick={handleEventClick}
-                events={events}
-                setEvents={setEvents}
-              />
+              <EventList events={events} setEvents={setEvents} />
             </Paper>
           </Grid>
         </Grid>

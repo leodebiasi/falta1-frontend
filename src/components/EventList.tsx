@@ -1,5 +1,6 @@
 import { Avatar, Box, Card, Typography } from "@mui/material";
 import React, { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 
 export interface AppEvent {
   id: string;
@@ -31,14 +32,19 @@ const formatDate = (dateString: string) => {
 
 interface EventCardProps {
   event: AppEvent;
-  onEventClick: (event: AppEvent) => void;
 }
 
-function EventCard({ event, onEventClick }: EventCardProps) {
+function EventCard({ event }: EventCardProps) {
+  const navigate = useNavigate();
   const { day, month } = formatDate(event.date);
+
+  const handleClick = () => {
+    navigate(`/event/${event.id}`);
+  };
 
   return (
     <Card
+      onClick={handleClick}
       style={{
         margin: "1rem",
         cursor: "pointer",
@@ -85,7 +91,6 @@ function EventCard({ event, onEventClick }: EventCardProps) {
 }
 
 interface Props {
-  onEventClick: (event: AppEvent) => void;
   events: AppEvent[];
   setEvents: React.Dispatch<React.SetStateAction<AppEvent[]>>;
 }
@@ -102,7 +107,7 @@ export const fetchEvents = async () => {
   }
 };
 
-const EventList: React.FC<Props> = ({ onEventClick, events, setEvents }) => {
+const EventList: React.FC<Props> = ({ events, setEvents }) => {
   useEffect(() => {
     fetchEvents().then(setEvents);
   }, []);
@@ -110,9 +115,7 @@ const EventList: React.FC<Props> = ({ onEventClick, events, setEvents }) => {
   return (
     <div>
       {events &&
-        events.map((event) => (
-          <EventCard key={event.id} event={event} onEventClick={onEventClick} />
-        ))}
+        events.map((event) => <EventCard key={event.id} event={event} />)}
     </div>
   );
 };
