@@ -36,9 +36,9 @@ interface EventCardProps {
 
 function EventCard({ event, onEventClick }: EventCardProps) {
   const { day, month } = formatDate(event.date);
+
   return (
     <Card
-      onClick={() => onEventClick(event)}
       style={{
         margin: "1rem",
         cursor: "pointer",
@@ -109,9 +109,10 @@ const EventList: React.FC<Props> = ({ onEventClick, events, setEvents }) => {
 
   return (
     <div>
-      {events.map((event) => (
-        <EventCard key={event.id} event={event} onEventClick={onEventClick} />
-      ))}
+      {events &&
+        events.map((event) => (
+          <EventCard key={event.id} event={event} onEventClick={onEventClick} />
+        ))}
     </div>
   );
 };

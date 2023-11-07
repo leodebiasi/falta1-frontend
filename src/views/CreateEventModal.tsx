@@ -12,7 +12,7 @@ import React, { useState } from "react";
 interface StyledModalProps {
   isOpen: boolean;
   closeModal: () => void;
-  refreshEvents: () => void; // Adicionado para permitir a atualização da lista de eventos após a criação
+  refreshEvents: () => void;
 }
 
 const CreateEventModal: React.FC<StyledModalProps> = ({

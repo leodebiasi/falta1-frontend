@@ -1,13 +1,35 @@
-import { Box, Button, Container, Grid, TextField } from "@mui/material";
+import {
+  Button,
+  Container,
+  CssBaseline,
+  Grid,
+  Paper,
+  ThemeProvider,
+  Typography,
+  createTheme,
+} from "@mui/material";
 import React, { useState } from "react";
-import EventDetails from "../components/EventDetails";
 import EventList, { AppEvent, fetchEvents } from "../components/EventList";
-import Header from "../components/Header";
 import CreateEventModal from "./CreateEventModal";
 
-const HomePage = () => {
-  const [events, setEvents] = useState<AppEvent[]>([]);
+const theme = createTheme({
+  palette: {
+    primary: {
+      main: "#fc4e30",
+    },
+    secondary: {
+      main: "#1a3d7c",
+    },
+    background: {
+      default: "#f3f3f3",
+    },
+  },
+});
 
+export default function HomePage() {
+  const [events, setEvents] = useState<AppEvent[]>([]);
+  const [viewDetails, setViewDetails] = useState<boolean>(false);
+  const [selectedEvent, setSelectedEvent] = useState<any>(null);
   const refreshEvents = async () => {
     const newEvents = await fetchEvents();
     if (newEvents) {
@@ -15,26 +37,9 @@ const HomePage = () => {
     }
   };
 
-  const [searchText, setSearchText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [viewDetails, setViewDetails] = useState<boolean>(false);
-  const [selectedEvent, setSelectedEvent] = useState<any>(null);
-
-  const handleBackToList = () => {
-    setViewDetails(false);
-    setSelectedEvent(null);
-  };
-
-  const openModal = () => {
-    setIsModalOpen(true);
-  };
-
   const closeModal = () => {
     setIsModalOpen(false);
-  };
-
-  const handleSearch = (value: string) => {
-    setSearchText(value);
   };
 
   const handleEventClick = (event: any) => {
@@ -43,79 +48,77 @@ const HomePage = () => {
   };
 
   return (
-    <Container
-      component="main"
-      maxWidth="xl"
-      sx={{ height: "100vh", overflow: "hidden", backgroundColor: "#f3f3f3" }}
-    >
-      <Grid container direction="column" sx={{ height: "100%" }}>
-        <Box
-          display="flex"
-          justifyContent="center"
-          alignItems="center"
-          height={100}
-          mb={2}
-          boxShadow={3}
-        >
-          <Header />
-        </Box>
-        <Box display="flex" justifyContent="center" alignItems="center" mb={2}>
-          <TextField
-            variant="outlined"
-            placeholder="Buscar jogo"
-            fullWidth
-            sx={{ maxWidth: "70%" }}
-            onChange={(e) => handleSearch(e.target.value)}
-          />
-        </Box>
-        <Box
-          flexGrow={1}
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            borderTop: 1,
-            borderRight: 1,
-            borderBottom: 1,
-            borderLeft: 1,
-            borderColor: "grey.400",
-            borderRadius: "5px",
-            mb: 2,
-            overflow: "auto",
-            maxHeight: "calc(100vh - 300px)",
-          }}
-        >
-          {!viewDetails ? (
-            <EventList
-              onEventClick={handleEventClick}
-              events={events}
-              setEvents={setEvents}
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <Container
+        component="main"
+        maxWidth="xl"
+        sx={{ height: "100vh", overflow: "hidden" }}
+      >
+        <Grid container spacing={1} sx={{ height: "100%" }}>
+          <Grid
+            item
+            xs={12}
+            md={6}
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "flex-start",
+              justifyContent: "center",
+              height: "100%",
+            }}
+          >
+            <img
+              src="/falta1_logo.png"
+              alt="Logo"
+              style={{ height: "auto", width: "700px" }}
             />
-          ) : (
-            <EventDetails event={selectedEvent} onBack={handleBackToList} />
-          )}
-        </Box>
-        <Box display="flex" justifyContent="center" mb={4}>
-          {!viewDetails ? (
-            <>
-              <Button
-                variant="contained"
-                color="primary"
-                sx={{ width: "30%" }}
-                onClick={openModal}
-              >
-                Criar evento
-              </Button>
-              <CreateEventModal
-                isOpen={isModalOpen}
-                closeModal={closeModal}
-                refreshEvents={refreshEvents}
-              />
-            </>
-          ) : null}
-        </Box>
-      </Grid>
-    </Container>
-  );
-};
+            <Typography
+              variant="h5"
+              sx={{ fontWeight: "bold", mt: 2, mb: 1, ml: 2 }}
+            >
+              Conectamos Pessoas e esportes
+            </Typography>
+            <Button
+              color="primary"
+              variant="contained"
+              sx={{ fontWeight: "bold", ml: 2, mt: 4 }}
+              onClick={() => setIsModalOpen(true)}
+            >
+              Criar evento
+            </Button>
+            <CreateEventModal
+              isOpen={isModalOpen}
+              closeModal={closeModal}
+              refreshEvents={refreshEvents}
+            />
+          </Grid>
 
-export default HomePage;
+          {/* Lado direito: Listagem de Eventos */}
+          <Grid item xs={12} md={6} mb={12}>
+            <Typography variant="h6" sx={{ fontWeight: "bold", mb: 2, mt: 2 }}>
+              Eventos
+            </Typography>
+            <Paper
+              elevation={3}
+              sx={{
+                p: 2,
+                display: "flex",
+                flexDirection: "column",
+                height: "100%",
+                backgroundColor: "#fff",
+                mt: 2,
+              }}
+            >
+              <EventList
+                onEventClick={handleEventClick}
+                events={events}
+                setEvents={setEvents}
+              />
+            </Paper>
+          </Grid>
+        </Grid>
+      </Container>
+    </ThemeProvider>
+  );
+}
