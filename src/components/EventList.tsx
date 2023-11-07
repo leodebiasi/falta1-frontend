@@ -54,7 +54,9 @@ function EventCard({ event, onEventClick }: any) {
       {/* Detalhes do evento */}
       <Box flex={1} marginLeft={2}>
         <Typography variant="h6">{event.description}</Typography>
-        <Typography variant="subtitle1">R$ {event.value.toFixed(2)}</Typography>
+        <Typography variant="subtitle1">
+          {formatValue(event.value, event.people_count)}
+        </Typography>
       </Box>
 
       {/* Data à direita */}

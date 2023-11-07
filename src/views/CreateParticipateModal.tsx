@@ -19,19 +19,29 @@ import React, { useState } from "react";
 interface ParticipateModalProps {
   isOpen: boolean;
   closeModal: () => void;
+  eventId: number;
 }
 
 const ParticipateModal: React.FC<ParticipateModalProps> = ({
   isOpen,
   closeModal,
+  eventId,
 }) => {
   const [activeStep, setActiveStep] = useState(0);
   const [name, setName] = useState("");
   const [brCode, setBrCode] = useState("");
 
-  const handleNext = () => {
+  const fetchBrCode = async () => {
+    const response = await fetch(
+      `${process.env.REACT_APP_API_URL_PROD}/events/${eventId}/qrcode`
+    );
+    const data = await response.json();
+    setBrCode(data.brCode);
+  };
+
+  const handleNext = async () => {
     if (activeStep === 0) {
-      setBrCode("Simulado123456");
+      await fetchBrCode();
     }
     setActiveStep((prevStep) => prevStep + 1);
   };

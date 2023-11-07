@@ -125,7 +125,7 @@ const CreateEventModal: React.FC<StyledModalProps> = ({
         <TextField
           margin="dense"
           id="password"
-          label="Senha"
+          label="Senha para Editar/Apagar"
           type="password"
           fullWidth
           value={eventData.password}

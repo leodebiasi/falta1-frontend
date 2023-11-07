@@ -4,7 +4,6 @@ import EventDetails from "../components/EventDetails";
 import EventList, { AppEvent, fetchEvents } from "../components/EventList";
 import Header from "../components/Header";
 import CreateEventModal from "./CreateEventModal";
-import ParticipateModal from "./CreateParticipateModal";
 
 const HomePage = () => {
   const [events, setEvents] = useState<AppEvent[]>([]);
@@ -23,9 +22,6 @@ const HomePage = () => {
   const [viewDetails, setViewDetails] = useState<boolean>(false);
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
 
-  const [isParticipateModalOpen, setIsParticipateModalOpen] =
-    useState<boolean>(false);
-
   const handleBackToList = () => {
     setViewDetails(false);
     setSelectedEvent(null);
@@ -37,14 +33,6 @@ const HomePage = () => {
 
   const closeModal = () => {
     setIsModalOpen(false);
-  };
-
-  const openParticipateModal = () => {
-    setIsParticipateModalOpen(true);
-  };
-
-  const closeParticipateModal = () => {
-    setIsParticipateModalOpen(false);
   };
 
   const handleSearch = (value: string) => {
@@ -77,7 +65,6 @@ const HomePage = () => {
         >
           <Header />
         </Box>
-
         <Box display="flex" justifyContent="center" alignItems="center" mb={2}>
           <TextField
             variant="outlined"
@@ -86,8 +73,7 @@ const HomePage = () => {
             sx={{ maxWidth: "70%" }}
             onChange={(e) => handleSearch(e.target.value)}
           />
-        </Box>
-
+        </Box>        
         <Box
           flexGrow={1}
           display="flex"
@@ -129,22 +115,7 @@ const HomePage = () => {
                 refreshEvents={refreshEvents}
               />
             </>
-          ) : (
-            <>
-              <Button
-                variant="contained"
-                color="secondary"
-                sx={{ width: "30%" }}
-                onClick={openParticipateModal}
-              >
-                Participar!
-              </Button>
-              <ParticipateModal
-                isOpen={isParticipateModalOpen}
-                closeModal={closeParticipateModal}
-              />
-            </>
-          )}
+          ) : null}
         </Box>
       </Grid>
     </Container>
