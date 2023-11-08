@@ -1,4 +1,5 @@
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import DeleteIcon from "@mui/icons-material/Delete";
 import {
   Box,
   Button,
@@ -84,6 +85,28 @@ const EventDetails: React.FC = () => {
 
   const handleBack = () => {
     navigate(-1);
+  };
+
+  const handleDeleteEvent = () => {
+    const userPassword = prompt(
+      "Por favor, insira a senha para apagar o evento:"
+    );
+    if (userPassword) {
+      axios
+        .delete(
+          `${process.env.REACT_APP_API_URL_PROD}/delete-event/${event.id}`,
+          {
+            data: { password: userPassword },
+          }
+        )
+        .then(() => {
+          alert("Evento apagado com sucesso.");
+          navigate(-1);
+        })
+        .catch((error) => {
+          alert("Erro ao apagar o evento: " + error.response.data.message);
+        });
+    }
   };
 
   const openParticipateModal = () => {
@@ -192,13 +215,24 @@ const EventDetails: React.FC = () => {
 
           {/* Lado direito: Listagem de Eventos */}
           <Grid item xs={12} md={6} mb={12}>
-            <Typography
-              color="secondary"
-              variant="h6"
-              sx={{ fontWeight: "bold", mb: 2, mt: 2 }}
-            >
-              Lista de jogadores
-            </Typography>
+            <Box display="flex" alignItems="center">
+              <Typography
+                color="secondary"
+                variant="h6"
+                sx={{ fontWeight: "bold" }}
+              >
+                Lista de jogadores
+              </Typography>
+
+              <IconButton
+                color="error"
+                onClick={handleDeleteEvent}
+                aria-label="Apagar evento"
+                sx={{ ml: theme.spacing(1) }}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Box>
             <Paper
               elevation={3}
               sx={{
