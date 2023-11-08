@@ -43,11 +43,7 @@ export default function HomePage() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <Container
-        component="main"
-        maxWidth="xl"
-        sx={{ height: "100vh", overflow: "hidden" }}
-      >
+      <Container component="main" maxWidth="xl" sx={{ height: "100vh" }}>
         <Grid container spacing={1} sx={{ height: "100%" }}>
           <Grid
             item
