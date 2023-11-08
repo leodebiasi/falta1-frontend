@@ -1,5 +1,6 @@
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DeleteIcon from "@mui/icons-material/Delete";
+import ShareIcon from "@mui/icons-material/Share";
 import {
   Box,
   Button,
@@ -106,6 +107,32 @@ const EventDetails: React.FC = () => {
         })
         .catch((error) => {
           alert("Erro ao apagar o evento: " + error.response.data.message);
+        });
+    }
+  };
+
+  const handleShareClick = () => {
+    if (navigator.share) {
+      navigator
+        .share({
+          title: document.title,
+          text: "Bora jogar? Falta 1!",
+          url: window.location.href,
+        })
+        .then(() => {
+          console.log("Compartilhamento bem-sucedido!");
+        })
+        .catch((error) => {
+          console.log("Erro ao compartilhar", error);
+        });
+    } else {
+      navigator.clipboard
+        .writeText(window.location.href)
+        .then(() => {
+          console.log("Link copiado para a área de transferência!");
+        })
+        .catch((error) => {
+          console.log("Erro ao copiar o link", error);
         });
     }
   };
@@ -227,9 +254,23 @@ const EventDetails: React.FC = () => {
             <Paper
               elevation={3}
               sx={{ p: 2, borderRadius: 2, height: "calc(100% - 48px)" }}
+            ></Paper>
+            <IconButton
+              color="secondary"
+              onClick={handleBack}
+              aria-label="Voltar"
+              sx={{ position: "absolute", top: 16, left: 16, borderRadius: 2 }}
             >
-              {/* Conteúdo da lista de jogadores aqui */}
-            </Paper>
+              <ArrowBackIcon />
+            </IconButton>
+            <IconButton
+              color="secondary"
+              onClick={handleShareClick}
+              aria-label="Compartilhar"
+              sx={{ position: "absolute", top: 16, left: 76, borderRadius: 2 }}
+            >
+              <ShareIcon />
+            </IconButton>
           </Grid>
         </Grid>
         <ParticipateModal
