@@ -13,6 +13,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import axios from "axios";
 import QRCode from "qrcode.react";
 import React, { useEffect, useState } from "react";
 
@@ -65,12 +66,18 @@ const ParticipateModal: React.FC<ParticipateModalProps> = ({
   }, [isOpen, activeStep, closeModal, txId]);
 
   const fetchBrCode = async () => {
-    const response = await fetch(
-      `${process.env.REACT_APP_API_URL_PROD}/events/${eventId}/qrcode`
-    );
-    const data = await response.json();
-    setBrCode(data.brCode);
-    setTxId(data.txId);
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL_PROD}/events/${eventId}/qrcode`,
+        {
+          name: name,
+        }
+      );
+      setBrCode(response.data.brCode);
+      setTxId(response.data.txId);
+    } catch (error) {
+      console.error("Falha ao obter o BRCode e enviar o nome:", error);
+    }
   };
 
   const handleNext = async () => {
