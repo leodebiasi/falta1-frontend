@@ -93,7 +93,7 @@ const CreateEventModal: React.FC<StyledModalProps> = ({
       console.error("Houve um erro ao criar o evento:", error);
       showSnackbar(
         "Erro ao criar o evento. Por favor, tente novamente mais tarde.",
-        "error"
+        "warning"
       );
     }
   };

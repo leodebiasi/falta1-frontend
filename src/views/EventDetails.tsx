@@ -2,6 +2,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ShareIcon from "@mui/icons-material/Share";
 import {
+  AlertColor,
   Box,
   Button,
   Card,
@@ -11,12 +12,13 @@ import {
   Grid,
   IconButton,
   Paper,
+  SnackbarCloseReason,
   ThemeProvider,
   Typography,
   createTheme,
 } from "@mui/material";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { SyntheticEvent, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ParticipateModal from "./CreateParticipateModal";
 
@@ -32,6 +34,12 @@ interface EventDetailsData {
 interface Participant {
   tx_id: string;
   nome: string;
+}
+
+interface SnackbarState {
+  open: boolean;
+  message: string;
+  severity: AlertColor;
 }
 
 const theme = createTheme({
@@ -60,6 +68,25 @@ const EventDetails: React.FC = () => {
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [isParticipateModalOpen, setIsParticipateModalOpen] =
     useState<boolean>(false);
+  const [snackbar, setSnackbar] = useState<SnackbarState>({
+    open: false,
+    message: "",
+    severity: "success" as AlertColor,
+  });
+
+  const showSnackbar = (message: string, severity: AlertColor) => {
+    setSnackbar({ open: true, message, severity });
+  };
+
+  const closeSnackbar = (
+    event?: SyntheticEvent<any, Event> | Event,
+    reason?: SnackbarCloseReason
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbar((prev) => ({ ...prev, open: false }));
+  };
 
   useEffect(() => {
     const apiUrl = process.env.REACT_APP_API_URL_PROD;
@@ -102,11 +129,14 @@ const EventDetails: React.FC = () => {
           }
         )
         .then(() => {
-          alert("Evento apagado com sucesso.");
+          showSnackbar("Evento apagado com sucesso.", "success");
           navigate(-1);
         })
         .catch((error) => {
-          alert("Erro ao apagar o evento: " + error.response.data.message);
+          showSnackbar(
+            "Erro ao apagar o evento: " + error.response.data.message,
+            "warning"
+          );
         });
     }
   };
