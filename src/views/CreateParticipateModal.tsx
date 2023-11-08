@@ -30,37 +30,43 @@ const ParticipateModal: React.FC<ParticipateModalProps> = ({
   const [activeStep, setActiveStep] = useState(0);
   const [name, setName] = useState("");
   const [brCode, setBrCode] = useState("");
-  const [ws, setWs] = useState<WebSocket | null>(null);
+  const [txId, setTxId] = useState("");
 
   useEffect(() => {
     if (isOpen && activeStep === 1) {
-      const websocket = new WebSocket("wss://falta1.onrender.com/ws");
-      setWs(websocket);
+      console.log("txId>>>>", txId);
+
+      const websocket = new WebSocket(
+        `wss://falta1.onrender.com/ws?txid=${txId}`
+      );
+
+      console.log("WebSocket connection established");
 
       websocket.onopen = () => {
         console.log("WebSocket connection established");
-      };
 
-      websocket.onmessage = (event) => {
-        if (event.data === "paid") {
-          alert("Pagamento confirmado!");
-          closeModal();
+        if (txId) {
+          websocket.send(JSON.stringify({ txId: txId }));
         }
       };
 
-      websocket.onerror = (event) => {
-        console.error("WebSocket error:", event);
+      websocket.onmessage = (event) => {
+        // Aqui você precisará lidar com as mensagens recebidas do servidor.
+        // Supondo que o servidor envie uma mensagem 'paid' quando o pagamento for confirmado.
+        const data = JSON.parse(event.data);
+        console.log("data>>>>", data);
+        if (data.status === "paid") {
+          alert("Pagamento confirmado!");
+        }
       };
 
-      websocket.onclose = (event) => {
-        console.log("WebSocket connection closed:", event);
-      };
+      // Restante do código ...
 
       return () => {
         websocket.close();
       };
     }
-  }, [isOpen, activeStep, closeModal]);
+  }, [isOpen, activeStep, closeModal, txId]);
 
   const fetchBrCode = async () => {
     const response = await fetch(
@@ -68,6 +74,7 @@ const ParticipateModal: React.FC<ParticipateModalProps> = ({
     );
     const data = await response.json();
     setBrCode(data.brCode);
+    setTxId(data.txId);
   };
 
   const handleNext = async () => {
