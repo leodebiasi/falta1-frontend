@@ -21,6 +21,7 @@ import ParticipateModal from "./CreateParticipateModal";
 
 interface EventDetailsData {
   id: number;
+  description: string;
   value: number;
   address: string;
   date: string;
@@ -125,125 +126,110 @@ const EventDetails: React.FC = () => {
         maxWidth="xl"
         sx={{ height: "100vh", overflow: "hidden" }}
       >
-        <Box
-          sx={{
-            position: "absolute",
-            top: theme.spacing(2),
-            left: theme.spacing(2),
-          }}
+        <IconButton
+          color="secondary"
+          onClick={handleBack}
+          aria-label="Voltar"
+          sx={{ position: "absolute", top: 16, left: 16, borderRadius: 2 }}
         >
-          <IconButton
-            color="secondary"
-            onClick={handleBack}
-            aria-label="Voltar"
-          >
-            <ArrowBackIcon />
-          </IconButton>
-        </Box>
-        <Grid container spacing={1} sx={{ height: "100%" }}>
-          <Grid item xs={12} sm={6}>
-            <Box
-              sx={{
-                textAlign: "center",
-                pt: theme.spacing(8),
-                pb: theme.spacing(4),
-              }}
-            >
-              <Typography
-                color="secondary"
-                variant="h3"
-                sx={{ fontWeight: "bold" }}
-              >
+          <ArrowBackIcon />
+        </IconButton>
+
+        <Grid container spacing={3} sx={{ height: "100%", pt: 3 }}>
+          <Grid item xs={12} md={6}>
+            <Box fontWeight="fontWeightBold" sx={{ textAlign: "center", p: 4 }}>
+              <Typography variant="h3" color="secondary" gutterBottom>
                 Bora jogar?
               </Typography>
               <Box
                 component="img"
                 src="/image_detail.png"
                 alt="Evento"
-                sx={{
-                  height: "auto",
-                  maxWidth: "100%",
-                  maxHeight: "400px",
-                  mt: theme.spacing(4),
-                }}
+                sx={{ width: "100%", maxWidth: 400, borderRadius: 2 }}
               />
+            </Box>
+
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+                my: 2,
+              }}
+            >
+              <Typography variant="h4" color="primary" noWrap gutterBottom>
+                {event.description}
+              </Typography>
               <Button
-                color="secondary"
                 variant="contained"
-                sx={{ fontWeight: "bold", mt: theme.spacing(4) }}
+                color="secondary"
+                sx={{ borderRadius: 20, px: 3 }}
                 onClick={openParticipateModal}
               >
                 Participar!
               </Button>
             </Box>
 
-            {/* Conteúdo Inferior: Detalhes do Evento */}
-            <Box sx={{ my: theme.spacing(4) }}>
-              <Card>
-                <CardContent>
-                  <Typography variant="subtitle1" gutterBottom>
-                    <Box component="span" fontWeight="fontWeightBold">
-                      Valor por pessoa:
-                    </Box>{" "}
-                    {formatValue(event.value, event.people_count)}
-                  </Typography>
+            <Card sx={{ borderRadius: 2, boxShadow: 3 }}>
+              <CardContent>
+                <Typography variant="subtitle1" gutterBottom>
+                  <Box component="span" fontWeight="fontWeightBold">
+                    Valor por pessoa:
+                  </Box>{" "}
+                  {formatValue(event.value, event.people_count)}
+                </Typography>
 
-                  <Typography variant="subtitle1" gutterBottom>
-                    <Box component="span" fontWeight="fontWeightBold">
-                      Endereço:
-                    </Box>{" "}
-                    {event.address}
-                  </Typography>
+                <Typography variant="subtitle1" gutterBottom>
+                  <Box component="span" fontWeight="fontWeightBold">
+                    Endereço:
+                  </Box>{" "}
+                  {event.address}
+                </Typography>
 
-                  <Typography variant="subtitle1" gutterBottom>
-                    <Box component="span" fontWeight="fontWeightBold">
-                      Data:
-                    </Box>{" "}
-                    {new Date(event.date).toLocaleDateString("pt-BR")}
-                  </Typography>
+                <Typography variant="subtitle1" gutterBottom>
+                  <Box component="span" fontWeight="fontWeightBold">
+                    Data:
+                  </Box>{" "}
+                  {new Date(event.date).toLocaleDateString("pt-BR")}
+                </Typography>
 
-                  <Typography variant="subtitle1" gutterBottom>
-                    <Box component="span" fontWeight="fontWeightBold">
-                      Quantidade de Pessoas:
-                    </Box>{" "}
-                    {event.people_count}
-                  </Typography>
-                </CardContent>
-              </Card>
-            </Box>
+                <Typography variant="subtitle1" gutterBottom>
+                  <Box component="span" fontWeight="fontWeightBold">
+                    Quantidade de Pessoas:
+                  </Box>{" "}
+                  {event.people_count}
+                </Typography>
+              </CardContent>
+            </Card>
           </Grid>
 
-          {/* Lado direito: Listagem de Eventos */}
-          <Grid item xs={12} md={6} mb={12}>
-            <Box display="flex" alignItems="center">
-              <Typography
-                color="secondary"
-                variant="h6"
-                sx={{ fontWeight: "bold" }}
-              >
+          <Grid item xs={12} md={6}>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "space-between",
+                mb: 2,
+              }}
+            >
+              <Typography variant="h6" color="secondary" gutterBottom>
                 Lista de jogadores
               </Typography>
-
               <IconButton
                 color="error"
                 onClick={handleDeleteEvent}
                 aria-label="Apagar evento"
-                sx={{ ml: theme.spacing(1) }}
               >
                 <DeleteIcon />
               </IconButton>
             </Box>
+
             <Paper
               elevation={3}
-              sx={{
-                p: 2,
-                display: "flex",
-                flexDirection: "column",
-                height: "100%",
-                backgroundColor: "#fff",
-                mt: 2,
-              }}
-            ></Paper>
+              sx={{ p: 2, borderRadius: 2, height: "calc(100% - 48px)" }}
+            >
+              {/* Conteúdo da lista de jogadores aqui */}
+            </Paper>
           </Grid>
         </Grid>
         <ParticipateModal

@@ -1,4 +1,4 @@
-import { Avatar, Box, Card, Typography } from "@mui/material";
+import { Avatar, Box, Card, Typography, useTheme } from "@mui/material";
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -35,6 +35,7 @@ interface EventCardProps {
 }
 
 function EventCard({ event }: EventCardProps) {
+  const theme = useTheme();
   const navigate = useNavigate();
   const { day, month } = formatDate(event.date);
 
@@ -45,24 +46,34 @@ function EventCard({ event }: EventCardProps) {
   return (
     <Card
       onClick={handleClick}
-      style={{
-        margin: "1rem",
+      sx={{
+        m: 2,
         cursor: "pointer",
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        padding: "1rem",
+        p: 2,
+        boxShadow: theme.shadows[3],
+        ":hover": {
+          boxShadow: theme.shadows[6],
+        },
+        borderRadius: theme.shape.borderRadius,
+        transition: theme.transitions.create(["box-shadow"], {
+          duration: theme.transitions.duration.standard,
+        }),
       }}
     >
       <Avatar
         src={event.image}
         alt={event.description}
         variant="rounded"
-        style={{ width: 50, height: 50 }}
+        sx={{ width: 50, height: 50, mr: 2 }}
       />
-      <Box flex={1} marginLeft={2}>
-        <Typography variant="h6">{event.description}</Typography>
-        <Typography variant="subtitle1">
+      <Box flex={1}>
+        <Typography variant="h6" component="div" gutterBottom>
+          {event.description}
+        </Typography>
+        <Typography variant="subtitle1" component="div">
           {formatValue(event.value, event.people_count)}
         </Typography>
       </Box>
@@ -73,16 +84,16 @@ function EventCard({ event }: EventCardProps) {
           alignItems: "center",
           justifyContent: "center",
           bgcolor: "primary.main",
-          color: "white",
-          width: 70,
-          height: 70,
-          borderRadius: "10px",
+          color: "primary.contrastText",
+          p: 1,
+          borderRadius: 2,
+          minWidth: 70,
         }}
       >
-        <Typography variant="h6" component="div">
+        <Typography variant="h6" component="div" noWrap>
           {day}
         </Typography>
-        <Typography variant="caption" component="div">
+        <Typography variant="caption" component="div" noWrap>
           {month}
         </Typography>
       </Box>
