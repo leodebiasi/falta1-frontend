@@ -1,4 +1,6 @@
+import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CloseIcon from "@mui/icons-material/Close";
+import ShareIcon from "@mui/icons-material/Share";
 import {
   Box,
   Button,
@@ -116,7 +118,7 @@ const ParticipateModal: React.FC<ParticipateModalProps> = ({
             </Step>
           </Stepper>
         </Box>
-        {activeStep === 0 ? (
+        {activeStep === 0 && (
           <TextField
             fullWidth
             variant="outlined"
@@ -125,13 +127,52 @@ const ParticipateModal: React.FC<ParticipateModalProps> = ({
             onChange={(e) => setName(e.target.value)}
             margin="normal"
           />
-        ) : (
+        )}
+        {activeStep === 1 && (
           <div style={{ textAlign: "center" }}>
             <Typography variant="h6" gutterBottom>
               Faça o pagamento usando o QRCode abaixo:
             </Typography>
             <QRCode value={brCode} />
           </div>
+        )}
+        {activeStep === 2 && (
+          <Box textAlign="center">
+            <CheckCircleIcon color="success" sx={{ fontSize: 60 }} />
+            <Typography variant="h5" gutterBottom>
+              Pagamento Confirmado!
+            </Typography>
+            <Typography>
+              Obrigado por confirmar o pagamento. Agora você está oficialmente
+              participando do evento!
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              startIcon={<ShareIcon />}
+              sx={{ mt: 2 }}
+              onClick={() => {
+                const eventLink = `https://falta1-frontend.vercel.app/event/${eventId}`;
+                if (navigator.share) {
+                  navigator
+                    .share({
+                      title: "Bora Jogar? Falta 1!",
+                      url: eventLink,
+                    })
+                    .catch(console.error);
+                } else {
+                  navigator.clipboard
+                    .writeText(eventLink)
+                    .then(() => {
+                      console.log("Link copiado para a área de transferência!");
+                    })
+                    .catch(console.error);
+                }
+              }}
+            >
+              Compartilhar Evento
+            </Button>
+          </Box>
         )}
       </DialogContent>
       <DialogActions
