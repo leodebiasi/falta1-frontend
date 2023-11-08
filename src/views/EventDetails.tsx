@@ -110,6 +110,17 @@ const EventDetails: React.FC = () => {
     setUserPassword(event.target.value);
   };
 
+  const fetchParticipants = () => {
+    const apiUrl = process.env.REACT_APP_API_URL_PROD;
+
+    axios
+      .get(`${apiUrl}/event/${eventId}/participants`)
+      .then((response) => {
+        setParticipants(response.data.participants);
+      })
+      .catch((error) => console.error("Error fetching participants: ", error));
+  };
+
   useEffect(() => {
     const apiUrl = process.env.REACT_APP_API_URL_PROD;
 
@@ -120,16 +131,11 @@ const EventDetails: React.FC = () => {
       })
       .catch((error) => console.error("Error fetching event details: ", error));
 
-    axios
-      .get(`${apiUrl}/event/${eventId}/participants`)
-      .then((response) => {
-        setParticipants(response.data.participants);
-      })
-      .catch((error) => console.error("Error fetching participants: ", error));
+    fetchParticipants();
   }, [eventId]);
 
   if (!event) {
-    return <div>Carregando...</div>; // ou qualquer outra mensagem de loading que você queira mostrar
+    return <div>Carregando...</div>;
   }
 
   const handleBack = () => {
@@ -327,12 +333,12 @@ const EventDetails: React.FC = () => {
                     maxWidth: 300,
                     borderRadius: 2,
                     marginRight: "auto",
-                  }} // Isso empurra a imagem para a esquerda e o botão para a direita
+                  }}
                 />
                 <Button
                   variant="contained"
                   color="secondary"
-                  sx={{ borderRadius: 15, px: 8, mr: 8 }}
+                  sx={{ borderRadius: 20, px: 8, mr: 8 }}
                   onClick={openParticipateModal}
                 >
                   Participar!
@@ -421,6 +427,7 @@ const EventDetails: React.FC = () => {
           isOpen={isParticipateModalOpen}
           closeModal={closeParticipateModal}
           eventId={event.id}
+          fetchParticipants={fetchParticipants}
         />
       </Container>
     </ThemeProvider>

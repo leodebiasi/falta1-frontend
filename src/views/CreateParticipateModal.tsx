@@ -24,12 +24,14 @@ interface ParticipateModalProps {
   isOpen: boolean;
   closeModal: () => void;
   eventId: number;
+  fetchParticipants: () => void;
 }
 
 const ParticipateModal: React.FC<ParticipateModalProps> = ({
   isOpen,
   closeModal,
   eventId,
+  fetchParticipants,
 }) => {
   const [activeStep, setActiveStep] = useState(0);
   const [name, setName] = useState("");
@@ -38,17 +40,10 @@ const ParticipateModal: React.FC<ParticipateModalProps> = ({
 
   useEffect(() => {
     if (isOpen && activeStep === 1) {
-      console.log("txId>>>>", txId);
-
       const websocket = new WebSocket(
         `wss://falta1.onrender.com/ws?txid=${txId}`
       );
-
-      console.log("WebSocket connection established");
-
       websocket.onopen = () => {
-        console.log("WebSocket connection established");
-
         if (txId) {
           websocket.send(JSON.stringify({ txId: txId }));
         }
@@ -56,9 +51,9 @@ const ParticipateModal: React.FC<ParticipateModalProps> = ({
 
       websocket.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        console.log("data teste>>>>", data);
         if (data.status === true) {
           setActiveStep(2);
+          fetchParticipants();
         }
       };
 
