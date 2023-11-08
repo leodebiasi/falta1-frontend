@@ -180,19 +180,21 @@ const ParticipateModal: React.FC<ParticipateModalProps> = ({
           justifyContent: activeStep === 0 ? "flex-end" : "space-between",
         }}
       >
-        {activeStep > 0 && (
+        {activeStep === 1 && (
           <Button variant="contained" color="primary" onClick={handleBack}>
             Voltar
           </Button>
         )}
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleNext}
-          disabled={activeStep === 1}
-        >
-          {activeStep === 0 ? "Avançar" : "Aguardando pagamento..."}
-        </Button>
+        {activeStep !== 2 && (
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleNext}
+            disabled={activeStep === 1}
+          >
+            {activeStep === 0 ? "Avançar" : "Aguardando pagamento..."}
+          </Button>
+        )}
       </DialogActions>
     </Dialog>
   );
