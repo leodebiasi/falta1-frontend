@@ -1,4 +1,5 @@
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ShareIcon from "@mui/icons-material/Share";
 import {
@@ -41,7 +42,7 @@ interface EventDetailsData {
 }
 
 interface Participant {
-  tx_id: string;
+  txid: string;
   nome: string;
 }
 
@@ -97,6 +98,11 @@ const EventDetails: React.FC = () => {
     setSnackbar((prev) => ({ ...prev, open: false }));
   };
 
+  const [deleteParticipantDialogOpen, setDeleteParticipantDialogOpen] =
+    useState(false);
+  const [participantToDelete, setParticipantToDelete] = useState<string | null>(
+    null
+  );
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [userPassword, setUserPassword] = useState("");
   const handleDeleteDialogOpen = () => {
@@ -176,6 +182,36 @@ const EventDetails: React.FC = () => {
     }
   };
 
+  const handleDeleteParticipantClick = (txId: string) => {
+    setParticipantToDelete(txId);
+    setDeleteParticipantDialogOpen(true);
+  };
+
+  const handleDeleteParticipantDialogClose = () => {
+    setDeleteParticipantDialogOpen(false);
+    setParticipantToDelete(null);
+  };
+
+  const handleDeleteParticipantConfirmed = async () => {
+    if (userPassword && participantToDelete) {
+      try {
+        const response = await axios.delete(
+          `${process.env.REACT_APP_API_URL_PROD}/delete-participant/${participantToDelete}`,
+          {
+            data: { password: userPassword },
+          }
+        );
+        if (response.status === 200) {
+          showSnackbar("Participante apagado com sucesso.", "success");
+          fetchParticipants();
+        }
+      } catch (error) {
+        showSnackbar("Senha incorreta.", "error");
+      }
+    }
+    handleDeleteParticipantDialogClose();
+  };
+
   const handleShareClick = () => {
     if (navigator.share) {
       navigator
@@ -212,6 +248,32 @@ const EventDetails: React.FC = () => {
 
   return (
     <ThemeProvider theme={theme}>
+      <Dialog
+        open={deleteParticipantDialogOpen}
+        onClose={handleDeleteParticipantDialogClose}
+      >
+        <DialogTitle>Apagar Participante</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Por favor, insira a senha para apagar o participante:
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="password"
+            label="Senha"
+            type="password"
+            fullWidth
+            variant="standard"
+            value={userPassword}
+            onChange={handlePasswordChange}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteParticipantDialogClose}>Cancelar</Button>
+          <Button onClick={handleDeleteParticipantConfirmed}>Apagar</Button>
+        </DialogActions>
+      </Dialog>
       <Dialog open={isDeleteDialogOpen} onClose={handleDeleteDialogClose}>
         <DialogTitle>Apagar Evento</DialogTitle>
         <DialogContent>
@@ -375,7 +437,7 @@ const EventDetails: React.FC = () => {
                 sx={{ overflow: "auto", maxHeight: "calc(100% - 48px)", pr: 2 }}
               >
                 {participants.map((participant, index) => (
-                  <Card key={participant.tx_id} sx={{ mb: 2 }}>
+                  <Card key={participant.txid} sx={{ mb: 2 }}>
                     <CardContent
                       sx={{
                         display: "flex",
@@ -400,6 +462,16 @@ const EventDetails: React.FC = () => {
                         sx={{ mx: 1.5 }}
                       />
                       <Typography variant="h6">{participant.nome}</Typography>
+                      <IconButton
+                        color="error"
+                        aria-label="Apagar participante"
+                        sx={{ ml: "auto" }}
+                        onClick={() =>
+                          handleDeleteParticipantClick(participant.txid)
+                        }
+                      >
+                        <CloseIcon />
+                      </IconButton>
                     </CardContent>
                   </Card>
                 ))}
