@@ -2,6 +2,7 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import DeleteIcon from "@mui/icons-material/Delete";
 import ShareIcon from "@mui/icons-material/Share";
 import {
+  Alert,
   AlertColor,
   Box,
   Button,
@@ -9,11 +10,18 @@ import {
   CardContent,
   Container,
   CssBaseline,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
   Divider,
   Grid,
   IconButton,
   Paper,
+  Snackbar,
   SnackbarCloseReason,
+  TextField,
   ThemeProvider,
   Typography,
   createTheme,
@@ -89,6 +97,19 @@ const EventDetails: React.FC = () => {
     setSnackbar((prev) => ({ ...prev, open: false }));
   };
 
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [userPassword, setUserPassword] = useState("");
+  const handleDeleteDialogOpen = () => {
+    setIsDeleteDialogOpen(true);
+  };
+  const handleDeleteDialogClose = () => {
+    setIsDeleteDialogOpen(false);
+    setUserPassword("");
+  };
+  const handlePasswordChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setUserPassword(event.target.value);
+  };
+
   useEffect(() => {
     const apiUrl = process.env.REACT_APP_API_URL_PROD;
 
@@ -115,28 +136,37 @@ const EventDetails: React.FC = () => {
     navigate(-1);
   };
 
-  const handleDeleteEvent = () => {
-    const userPassword = prompt(
-      "Por favor, insira a senha para apagar o evento:"
-    );
+  const handleDeleteEventConfirmed = async () => {
     if (userPassword) {
-      axios
-        .delete(
+      try {
+        const response = await axios.delete(
           `${process.env.REACT_APP_API_URL_PROD}/delete-event/${event.id}`,
           {
             data: { password: userPassword },
           }
-        )
-        .then(() => {
+        );
+        handleDeleteDialogClose();
+        if (response.status === 200) {
           showSnackbar("Evento apagado com sucesso.", "success");
+          handleDeleteDialogClose();
           navigate(-1);
-        })
-        .catch((error) => {
-          showSnackbar(
-            "Erro ao apagar o evento: " + error.response.data.message,
-            "warning"
-          );
-        });
+        }
+      } catch (error: unknown) {
+        let message = "Ocorreu um erro desconhecido.";
+
+        if (axios.isAxiosError(error)) {
+          if (error.response) {
+            message = error.response.data.message || error.response.statusText;
+          } else if (error.request) {
+            message = error.request;
+          } else {
+            message = error.message;
+          }
+        }
+        showSnackbar(message, "error");
+
+        handleDeleteDialogClose();
+      }
     }
   };
 
@@ -176,6 +206,49 @@ const EventDetails: React.FC = () => {
 
   return (
     <ThemeProvider theme={theme}>
+      <Dialog open={isDeleteDialogOpen} onClose={handleDeleteDialogClose}>
+        <DialogTitle>Apagar Evento</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Por favor, insira a senha para apagar o evento:
+          </DialogContentText>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="password"
+            label="Senha"
+            type="password"
+            fullWidth
+            variant="standard"
+            value={userPassword}
+            onChange={handlePasswordChange}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDeleteDialogClose}>Cancelar</Button>
+          <Button
+            onClick={() => {
+              handleDeleteEventConfirmed();
+            }}
+          >
+            Apagar
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={closeSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={closeSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
       <CssBaseline />
       <Container
         component="main"
@@ -193,40 +266,16 @@ const EventDetails: React.FC = () => {
 
         <Grid container spacing={3} sx={{ height: "100%", pt: 3 }}>
           <Grid item xs={12} md={6}>
-            <Box fontWeight="fontWeightBold" sx={{ textAlign: "center", p: 4 }}>
-              <Typography variant="h3" color="secondary" gutterBottom>
-                Bora jogar?
-              </Typography>
-              <Box
-                component="img"
-                src="/image_detail.png"
-                alt="Evento"
-                sx={{ width: "100%", maxWidth: 400, borderRadius: 2 }}
-              />
-            </Box>
-
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                alignItems: "center",
-                my: 2,
-              }}
-            >
-              <Typography variant="h4" color="primary" noWrap gutterBottom>
+            <Card sx={{ mt: 5, borderRadius: 2, boxShadow: 3 }}>
+              <Typography
+                variant="h4"
+                color="primary"
+                noWrap
+                gutterBottom
+                sx={{ ml: 1, mt: 1 }}
+              >
                 {event.description}
               </Typography>
-              <Button
-                variant="contained"
-                color="secondary"
-                sx={{ borderRadius: 20, px: 3 }}
-                onClick={openParticipateModal}
-              >
-                Participar!
-              </Button>
-            </Box>
-
-            <Card sx={{ borderRadius: 2, boxShadow: 3 }}>
               <CardContent>
                 <Typography variant="subtitle1" gutterBottom>
                   <Box component="span" fontWeight="fontWeightBold">
@@ -257,6 +306,39 @@ const EventDetails: React.FC = () => {
                 </Typography>
               </CardContent>
             </Card>
+            <Box fontWeight="fontWeightBold" sx={{ textAlign: "left", p: 4 }}>
+              <Typography variant="h4" color="secondary" gutterBottom>
+                Bora jogar?
+              </Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  justifyContent: "flex-end",
+                  alignItems: "center",
+                  my: 2,
+                }}
+              >
+                <Box
+                  component="img"
+                  src="/image_detail.png"
+                  alt="Evento"
+                  sx={{
+                    width: "50%",
+                    maxWidth: 300,
+                    borderRadius: 2,
+                    marginRight: "auto",
+                  }} // Isso empurra a imagem para a esquerda e o botão para a direita
+                />
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  sx={{ borderRadius: 15, px: 8, mr: 8 }}
+                  onClick={openParticipateModal}
+                >
+                  Participar!
+                </Button>
+              </Box>
+            </Box>
           </Grid>
 
           <Grid item xs={12} md={6}>
@@ -273,7 +355,7 @@ const EventDetails: React.FC = () => {
               </Typography>
               <IconButton
                 color="error"
-                onClick={handleDeleteEvent}
+                onClick={handleDeleteDialogOpen}
                 aria-label="Apagar evento"
               >
                 <DeleteIcon />

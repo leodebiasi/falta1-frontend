@@ -190,6 +190,7 @@ const CreateEventModal: React.FC<StyledModalProps> = ({
         open={snackbar.open}
         autoHideDuration={6000}
         onClose={closeSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         <Alert
           onClose={closeSnackbar}
