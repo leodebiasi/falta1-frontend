@@ -9,6 +9,7 @@ import {
   CardContent,
   Container,
   CssBaseline,
+  Divider,
   Grid,
   IconButton,
   Paper,
@@ -91,7 +92,6 @@ const EventDetails: React.FC = () => {
   useEffect(() => {
     const apiUrl = process.env.REACT_APP_API_URL_PROD;
 
-    // Carregar os detalhes do evento
     axios
       .get(`${apiUrl}/get-event/${eventId}`)
       .then((response) => {
@@ -99,7 +99,6 @@ const EventDetails: React.FC = () => {
       })
       .catch((error) => console.error("Error fetching event details: ", error));
 
-    // Carregar os participantes do evento
     axios
       .get(`${apiUrl}/event/${eventId}/participants`)
       .then((response) => {
@@ -280,11 +279,44 @@ const EventDetails: React.FC = () => {
                 <DeleteIcon />
               </IconButton>
             </Box>
-
             <Paper
               elevation={3}
               sx={{ p: 2, borderRadius: 2, height: "calc(100% - 48px)" }}
-            ></Paper>
+            >
+              <Box
+                sx={{ overflow: "auto", maxHeight: "calc(100% - 48px)", pr: 2 }}
+              >
+                {participants.map((participant, index) => (
+                  <Card key={participant.tx_id} sx={{ mb: 2 }}>
+                    <CardContent
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        "&:hover": {
+                          boxShadow: 6,
+                          transform: "scale(1.02)",
+                          transition: "transform 0.15s ease-in-out",
+                          backgroundColor: "action.hover", // Um leve fundo ao passar o mouse.
+                        },
+                      }}
+                    >
+                      <Typography
+                        variant="h6"
+                        sx={{ minWidth: "2rem", textAlign: "right" }}
+                      >
+                        {index + 1}
+                      </Typography>
+                      <Divider
+                        orientation="vertical"
+                        flexItem
+                        sx={{ mx: 1.5 }}
+                      />
+                      <Typography variant="h6">{participant.nome}</Typography>
+                    </CardContent>
+                  </Card>
+                ))}
+              </Box>
+            </Paper>
             <IconButton
               color="secondary"
               onClick={handleBack}
