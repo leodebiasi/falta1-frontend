@@ -1,8 +1,13 @@
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import {
+  Box,
   Button,
+  Card,
+  CardContent,
   Container,
   CssBaseline,
   Grid,
+  IconButton,
   Paper,
   ThemeProvider,
   Typography,
@@ -97,45 +102,101 @@ const EventDetails: React.FC = () => {
         maxWidth="xl"
         sx={{ height: "100vh", overflow: "hidden" }}
       >
-        <Grid container spacing={1} sx={{ height: "100%" }}>
-          <Grid
-            item
-            xs={12}
-            md={6}
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "flex-start",
-              justifyContent: "center",
-              height: "100%",
-            }}
+        <Box
+          sx={{
+            position: "absolute",
+            top: theme.spacing(2),
+            left: theme.spacing(2),
+          }}
+        >
+          <IconButton
+            color="secondary"
+            onClick={handleBack}
+            aria-label="Voltar"
           >
-            <Typography variant="h3" sx={{ fontWeight: "bold", mb: 1, ml: 2 }}>
-              Bora jogar?
-            </Typography>
-            <img
-              src="/image_detail.png"
-              alt="Logo"
-              style={{ height: "auto", width: "400px" }}
-            />
-            <Button
-              color="secondary"
-              variant="contained"
-              sx={{ fontWeight: "bold", ml: 2, mt: 4 }}
-              onClick={openParticipateModal}
+            <ArrowBackIcon />
+          </IconButton>
+        </Box>
+        <Grid container spacing={1} sx={{ height: "100%" }}>
+          <Grid item xs={12} sm={6}>
+            <Box
+              sx={{
+                textAlign: "center",
+                pt: theme.spacing(8),
+                pb: theme.spacing(4),
+              }}
             >
-              Participar!
-            </Button>
-            <ParticipateModal
-              isOpen={isParticipateModalOpen}
-              closeModal={closeParticipateModal}
-              eventId={event.id}
-            />
+              <Typography
+                color="secondary"
+                variant="h3"
+                sx={{ fontWeight: "bold" }}
+              >
+                Bora jogar?
+              </Typography>
+              <Box
+                component="img"
+                src="/image_detail.png"
+                alt="Evento"
+                sx={{
+                  height: "auto",
+                  maxWidth: "100%",
+                  maxHeight: "400px",
+                  mt: theme.spacing(4),
+                }}
+              />
+              <Button
+                color="secondary"
+                variant="contained"
+                sx={{ fontWeight: "bold", mt: theme.spacing(4) }}
+                onClick={openParticipateModal}
+              >
+                Participar!
+              </Button>
+            </Box>
+
+            {/* Conteúdo Inferior: Detalhes do Evento */}
+            <Box sx={{ my: theme.spacing(4) }}>
+              <Card>
+                <CardContent>
+                  <Typography variant="subtitle1" gutterBottom>
+                    <Box component="span" fontWeight="fontWeightBold">
+                      Valor por pessoa:
+                    </Box>{" "}
+                    {formatValue(event.value, event.people_count)}
+                  </Typography>
+
+                  <Typography variant="subtitle1" gutterBottom>
+                    <Box component="span" fontWeight="fontWeightBold">
+                      Endereço:
+                    </Box>{" "}
+                    {event.address}
+                  </Typography>
+
+                  <Typography variant="subtitle1" gutterBottom>
+                    <Box component="span" fontWeight="fontWeightBold">
+                      Data:
+                    </Box>{" "}
+                    {new Date(event.date).toLocaleDateString("pt-BR")}
+                  </Typography>
+
+                  <Typography variant="subtitle1" gutterBottom>
+                    <Box component="span" fontWeight="fontWeightBold">
+                      Quantidade de Pessoas:
+                    </Box>{" "}
+                    {event.people_count}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Box>
           </Grid>
 
           {/* Lado direito: Listagem de Eventos */}
           <Grid item xs={12} md={6} mb={12}>
-            <Typography variant="h6" sx={{ fontWeight: "bold", mb: 2, mt: 2 }}>
+            <Typography
+              color="secondary"
+              variant="h6"
+              sx={{ fontWeight: "bold", mb: 2, mt: 2 }}
+            >
               Lista de jogadores
             </Typography>
             <Paper
@@ -151,6 +212,11 @@ const EventDetails: React.FC = () => {
             ></Paper>
           </Grid>
         </Grid>
+        <ParticipateModal
+          isOpen={isParticipateModalOpen}
+          closeModal={closeParticipateModal}
+          eventId={event.id}
+        />
       </Container>
     </ThemeProvider>
   );
