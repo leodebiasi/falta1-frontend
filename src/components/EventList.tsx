@@ -152,7 +152,12 @@ const EventList: React.FC<Props> = ({ events, setEvents }) => {
   }, []);
 
   return (
-    <div>
+    <div
+      style={{
+        overflowY: "auto",
+        maxHeight: "calc(100vh - tamanho de outros componentes)",
+      }}
+    >
       {events &&
         events.map((event) => <EventCard key={event.id} event={event} />)}
     </div>

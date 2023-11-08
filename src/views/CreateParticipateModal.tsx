@@ -1,5 +1,6 @@
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import CloseIcon from "@mui/icons-material/Close";
+import FileCopyIcon from "@mui/icons-material/FileCopy";
 import ShareIcon from "@mui/icons-material/Share";
 import {
   Box,
@@ -129,11 +130,32 @@ const ParticipateModal: React.FC<ParticipateModalProps> = ({
           />
         )}
         {activeStep === 1 && (
-          <div style={{ textAlign: "center" }}>
+          <div
+            style={{
+              textAlign: "center",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
             <Typography variant="h6" gutterBottom>
               Faça o pagamento usando o QRCode abaixo:
             </Typography>
             <QRCode value={brCode} />
+            <Button
+              variant="contained"
+              color="secondary"
+              startIcon={<FileCopyIcon />}
+              sx={{ mt: 2 }}
+              onClick={() => {
+                navigator.clipboard
+                  .writeText(brCode)
+                  .then(() => {})
+                  .catch(console.error);
+              }}
+            >
+              Copiar BRCode
+            </Button>
           </div>
         )}
         {activeStep === 2 && (
