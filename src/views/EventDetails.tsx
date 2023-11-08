@@ -9,6 +9,7 @@ import {
   Button,
   Card,
   CardContent,
+  CircularProgress,
   Container,
   CssBaseline,
   Dialog,
@@ -141,7 +142,16 @@ const EventDetails: React.FC = () => {
   }, [eventId]);
 
   if (!event) {
-    return <div>Carregando...</div>;
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        height="100vh"
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
   const handleBack = () => {
