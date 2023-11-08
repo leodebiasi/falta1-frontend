@@ -55,8 +55,8 @@ const ParticipateModal: React.FC<ParticipateModalProps> = ({
 
       websocket.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        console.log("data>>>>", data);
-        if (data.status === "paid") {
+        console.log("data teste>>>>", data);
+        if (data.status === true) {
           setActiveStep(2);
         }
       };
@@ -72,7 +72,7 @@ const ParticipateModal: React.FC<ParticipateModalProps> = ({
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL_PROD}/events/${eventId}/qrcode`,
         {
-          name: name,
+          nome: name,
         }
       );
       setBrCode(response.data.brCode);
