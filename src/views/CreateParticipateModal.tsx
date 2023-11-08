@@ -5,6 +5,7 @@ import ShareIcon from "@mui/icons-material/Share";
 import {
   Box,
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -33,6 +34,7 @@ const ParticipateModal: React.FC<ParticipateModalProps> = ({
   eventId,
   fetchParticipants,
 }) => {
+  const [loading, setLoading] = useState(false);
   const [activeStep, setActiveStep] = useState(0);
   const [name, setName] = useState("");
   const [brCode, setBrCode] = useState("");
@@ -64,6 +66,7 @@ const ParticipateModal: React.FC<ParticipateModalProps> = ({
   }, [isOpen, activeStep, closeModal, txId]);
 
   const fetchBrCode = async () => {
+    setLoading(true);
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL_PROD}/events/${eventId}/qrcode`,
@@ -75,6 +78,8 @@ const ParticipateModal: React.FC<ParticipateModalProps> = ({
       setTxId(response.data.txId);
     } catch (error) {
       console.error("Falha ao obter o BRCode e enviar o nome:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -207,9 +212,17 @@ const ParticipateModal: React.FC<ParticipateModalProps> = ({
             variant="contained"
             color="primary"
             onClick={handleNext}
-            disabled={activeStep === 1}
+            disabled={loading || activeStep === 1}
           >
-            {activeStep === 0 ? "Avançar" : "Aguardando pagamento..."}
+            {loading ? (
+              <CircularProgress size={24} />
+            ) : activeStep === 1 ? (
+              <span>
+                Aguardando pagamento <CircularProgress size={14} />
+              </span>
+            ) : (
+              "Avançar"
+            )}
           </Button>
         )}
       </DialogActions>

@@ -2,6 +2,7 @@ import {
   Alert,
   AlertColor,
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -41,6 +42,8 @@ const CreateEventModal: React.FC<StyledModalProps> = ({
     password: "",
   });
 
+  const [loading, setLoading] = useState(false);
+
   const [snackbar, setSnackbar] = useState<SnackbarState>({
     open: false,
     message: "",
@@ -76,6 +79,7 @@ const CreateEventModal: React.FC<StyledModalProps> = ({
   };
 
   const handleSubmit = async () => {
+    setLoading(true);
     try {
       const response = await axios.post(
         `${process.env.REACT_APP_API_URL_PROD}/create-event`,
@@ -97,6 +101,8 @@ const CreateEventModal: React.FC<StyledModalProps> = ({
         "Erro ao criar o evento. Por favor, tente novamente mais tarde.",
         "warning"
       );
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -193,8 +199,8 @@ const CreateEventModal: React.FC<StyledModalProps> = ({
           <Button onClick={closeModal} color="primary">
             Cancelar
           </Button>
-          <Button onClick={handleSubmit} color="primary">
-            Salvar
+          <Button onClick={handleSubmit} color="primary" disabled={loading}>
+            {loading ? <CircularProgress size={24} /> : "Salvar"}
           </Button>
         </DialogActions>
       </Dialog>
