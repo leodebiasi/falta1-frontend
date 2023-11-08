@@ -1,18 +1,28 @@
 import {
+  Alert,
+  AlertColor,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
+  Snackbar,
+  SnackbarCloseReason,
   TextField,
 } from "@mui/material";
 import axios from "axios";
-import React, { useState } from "react";
+import React, { SyntheticEvent, useState } from "react";
 
 interface StyledModalProps {
   isOpen: boolean;
   closeModal: () => void;
   refreshEvents: () => void;
+}
+
+interface SnackbarState {
+  open: boolean;
+  message: string;
+  severity: AlertColor;
 }
 
 const CreateEventModal: React.FC<StyledModalProps> = ({
@@ -30,6 +40,39 @@ const CreateEventModal: React.FC<StyledModalProps> = ({
     password: "",
   });
 
+  const [snackbar, setSnackbar] = useState<SnackbarState>({
+    open: false,
+    message: "",
+    severity: "success" as AlertColor,
+  });
+
+  const showSnackbar = (message: string, severity: AlertColor) => {
+    setSnackbar({ open: true, message, severity });
+  };
+
+  const closeSnackbar = (
+    event?: SyntheticEvent<any, Event> | Event,
+    reason?: SnackbarCloseReason
+  ) => {
+    if (reason === "clickaway") {
+      return;
+    }
+    setSnackbar((prev) => ({ ...prev, open: false }));
+  };
+
+  const handleModalClose = () => {
+    setEventData({
+      description: "",
+      value: "",
+      date: "",
+      address: "",
+      people_count: "",
+      image: "",
+      password: "",
+    });
+    closeModal();
+  };
+
   const handleSubmit = async () => {
     try {
       const response = await axios.post(
@@ -42,14 +85,15 @@ const CreateEventModal: React.FC<StyledModalProps> = ({
       );
 
       if (response.status === 201) {
-        alert("Evento criado com sucesso!");
-        closeModal(); // Fecha o modal após a criação bem-sucedida
-        refreshEvents(); // Atualiza a lista de eventos
+        showSnackbar("Evento criado com sucesso!", "success");
+        handleModalClose();
+        refreshEvents();
       }
     } catch (error) {
       console.error("Houve um erro ao criar o evento:", error);
-      alert(
-        "Houve um erro ao criar o evento. Por favor, tente novamente mais tarde."
+      showSnackbar(
+        "Erro ao criar o evento. Por favor, tente novamente mais tarde.",
+        "error"
       );
     }
   };
@@ -63,84 +107,99 @@ const CreateEventModal: React.FC<StyledModalProps> = ({
   };
 
   return (
-    <Dialog open={isOpen} onClose={closeModal}>
-      <DialogTitle>Criar Evento</DialogTitle>
-      <DialogContent>
-        <TextField
-          autoFocus
-          margin="dense"
-          id="description"
-          label="Descrição"
-          type="text"
-          fullWidth
-          value={eventData.description}
-          onChange={handleChange}
-        />
-        <TextField
-          margin="dense"
-          id="value"
-          label="Valor"
-          type="number"
-          fullWidth
-          value={eventData.value}
-          onChange={handleChange}
-        />
-        <TextField
-          margin="dense"
-          id="date"
-          label="Data"
-          type="date"
-          fullWidth
-          InputLabelProps={{ shrink: true }}
-          value={eventData.date}
-          onChange={handleChange}
-        />
-        <TextField
-          margin="dense"
-          id="address"
-          label="Endereço"
-          type="text"
-          fullWidth
-          value={eventData.address}
-          onChange={handleChange}
-        />
-        <TextField
-          margin="dense"
-          id="people_count"
-          label="Número de pessoas"
-          type="number"
-          fullWidth
-          value={eventData.people_count}
-          onChange={handleChange}
-        />
-        <TextField
-          margin="dense"
-          id="image"
-          label="URL da Imagem"
-          type="url"
-          fullWidth
-          value={eventData.image}
-          onChange={handleChange}
-        />
-        <TextField
-          margin="dense"
-          id="password"
-          label="Senha para Editar/Apagar"
-          type="password"
-          fullWidth
-          value={eventData.password}
-          onChange={handleChange}
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={closeModal} color="primary">
-          Cancelar
-        </Button>
-        <Button onClick={handleSubmit} color="primary">
-          Salvar
-        </Button>
-      </DialogActions>
-    </Dialog>
+    <>
+      <Dialog open={isOpen} onClose={handleModalClose}>
+        <DialogTitle>Criar Evento</DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            margin="dense"
+            id="description"
+            label="Descrição"
+            type="text"
+            fullWidth
+            value={eventData.description}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="dense"
+            id="value"
+            label="Valor"
+            type="number"
+            fullWidth
+            value={eventData.value}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="dense"
+            id="date"
+            label="Data"
+            type="date"
+            fullWidth
+            InputLabelProps={{ shrink: true }}
+            value={eventData.date}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="dense"
+            id="address"
+            label="Endereço"
+            type="text"
+            fullWidth
+            value={eventData.address}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="dense"
+            id="people_count"
+            label="Número de pessoas"
+            type="number"
+            fullWidth
+            value={eventData.people_count}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="dense"
+            id="image"
+            label="URL da Imagem"
+            type="url"
+            fullWidth
+            value={eventData.image}
+            onChange={handleChange}
+          />
+          <TextField
+            margin="dense"
+            id="password"
+            label="Senha para Editar/Apagar"
+            type="password"
+            fullWidth
+            value={eventData.password}
+            onChange={handleChange}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeModal} color="primary">
+            Cancelar
+          </Button>
+          <Button onClick={handleSubmit} color="primary">
+            Salvar
+          </Button>
+        </DialogActions>
+      </Dialog>
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={6000}
+        onClose={closeSnackbar}
+      >
+        <Alert
+          onClose={closeSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
+    </>
   );
 };
 

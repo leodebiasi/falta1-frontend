@@ -51,16 +51,12 @@ const ParticipateModal: React.FC<ParticipateModalProps> = ({
       };
 
       websocket.onmessage = (event) => {
-        // Aqui você precisará lidar com as mensagens recebidas do servidor.
-        // Supondo que o servidor envie uma mensagem 'paid' quando o pagamento for confirmado.
         const data = JSON.parse(event.data);
         console.log("data>>>>", data);
         if (data.status === "paid") {
-          alert("Pagamento confirmado!");
+          setActiveStep(2);
         }
       };
-
-      // Restante do código ...
 
       return () => {
         websocket.close();
@@ -107,6 +103,9 @@ const ParticipateModal: React.FC<ParticipateModalProps> = ({
             </Step>
             <Step>
               <StepLabel>Pagamento via PIX</StepLabel>
+            </Step>
+            <Step>
+              <StepLabel>Confirmação</StepLabel>
             </Step>
           </Stepper>
         </Box>

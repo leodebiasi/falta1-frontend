@@ -69,7 +69,13 @@ export default function HomePage() {
             <Typography
               color="secondary"
               variant="h5"
-              sx={{ fontWeight: "bold", mt: 2, mb: 1, ml: 2 }}
+              sx={{
+                fontStyle: "italic",
+                fontWeight: "bold",
+                mt: 2,
+                mb: 1,
+                ml: 2,
+              }}
             >
               O ESPORTE CONECTA!
             </Typography>
@@ -88,14 +94,13 @@ export default function HomePage() {
             />
           </Grid>
 
-          {/* Lado direito: Listagem de Eventos */}
           <Grid item xs={12} md={6} mb={12}>
             <Typography
               color="secondary"
-              variant="h6"
+              variant="h5"
               sx={{ fontWeight: "bold", mb: 2, mt: 2 }}
             >
-              Eventos
+              Lista de Eventos
             </Typography>
             <Paper
               elevation={3}

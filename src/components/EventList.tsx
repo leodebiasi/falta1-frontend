@@ -52,7 +52,7 @@ function EventCard({ event }: EventCardProps) {
         display: "flex",
         alignItems: "center",
         justifyContent: "space-between",
-        p: 2,
+        p: 1,
         boxShadow: theme.shadows[3],
         ":hover": {
           boxShadow: theme.shadows[6],
@@ -67,13 +67,28 @@ function EventCard({ event }: EventCardProps) {
         src={event.image}
         alt={event.description}
         variant="rounded"
-        sx={{ width: 50, height: 50, mr: 2 }}
+        sx={{ width: 60, height: 60, mr: 5 }}
       />
       <Box flex={1}>
-        <Typography variant="h6" component="div" gutterBottom>
+        <Typography
+          variant="h6"
+          color="secundary"
+          component="div"
+          gutterBottom
+          sx={{
+            fontStyle: "italic",
+            fontWeight: "bold",
+          }}
+        >
           {event.description}
         </Typography>
-        <Typography variant="subtitle1" component="div">
+        <Typography
+          variant="subtitle1"
+          component="div"
+          sx={{
+            fontWeight: "bold",
+          }}
+        >
           {formatValue(event.value, event.people_count)}
         </Typography>
       </Box>
@@ -90,10 +105,23 @@ function EventCard({ event }: EventCardProps) {
           minWidth: 70,
         }}
       >
-        <Typography variant="h6" component="div" noWrap>
+        <Typography
+          variant="h6"
+          component="div"
+          noWrap
+          sx={{
+            fontWeight: "bold",
+          }}
+        >
           {day}
         </Typography>
-        <Typography variant="caption" component="div" noWrap>
+        <Typography
+          component="div"
+          noWrap
+          sx={{
+            fontWeight: "bold",
+          }}
+        >
           {month}
         </Typography>
       </Box>
