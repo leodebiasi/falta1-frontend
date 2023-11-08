@@ -32,6 +32,7 @@ const CreateEventModal: React.FC<StyledModalProps> = ({
 }) => {
   const [eventData, setEventData] = useState({
     description: "",
+    modality: "",
     value: "",
     date: "",
     address: "",
@@ -63,6 +64,7 @@ const CreateEventModal: React.FC<StyledModalProps> = ({
   const handleModalClose = () => {
     setEventData({
       description: "",
+      modality: "",
       value: "",
       date: "",
       address: "",
@@ -119,6 +121,16 @@ const CreateEventModal: React.FC<StyledModalProps> = ({
             type="text"
             fullWidth
             value={eventData.description}
+            onChange={handleChange}
+          />
+          <TextField
+            autoFocus
+            margin="dense"
+            id="modality"
+            label="Modalidade"
+            type="text"
+            fullWidth
+            value={eventData.modality}
             onChange={handleChange}
           />
           <TextField
