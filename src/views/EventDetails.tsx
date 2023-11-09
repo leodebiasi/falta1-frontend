@@ -73,6 +73,8 @@ function formatValue(value: number, peopleCount: number) {
 }
 
 const EventDetails: React.FC = () => {
+  const [loading, setLoading] = useState(false);
+  const [loadingParticipant, setLoadingParticipant] = useState(false);
   const { eventId } = useParams<{ eventId: string }>();
   const navigate = useNavigate();
   const [event, setEvent] = useState<EventDetailsData | null>(null);
@@ -159,6 +161,7 @@ const EventDetails: React.FC = () => {
   };
 
   const handleDeleteEventConfirmed = async () => {
+    setLoading(true);
     if (userPassword) {
       try {
         const response = await axios.delete(
@@ -173,21 +176,11 @@ const EventDetails: React.FC = () => {
           handleDeleteDialogClose();
           navigate(-1);
         }
-      } catch (error: unknown) {
-        let message = "Ocorreu um erro desconhecido.";
-
-        if (axios.isAxiosError(error)) {
-          if (error.response) {
-            message = error.response.data.message || error.response.statusText;
-          } else if (error.request) {
-            message = error.request;
-          } else {
-            message = error.message;
-          }
-        }
-        showSnackbar(message, "error");
-
+      } catch (error) {
         handleDeleteDialogClose();
+        showSnackbar("Senha incorreta.", "error");
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -203,6 +196,7 @@ const EventDetails: React.FC = () => {
   };
 
   const handleDeleteParticipantConfirmed = async () => {
+    setLoadingParticipant(true);
     if (userPassword && participantToDelete) {
       try {
         const response = await axios.delete(
@@ -217,6 +211,8 @@ const EventDetails: React.FC = () => {
         }
       } catch (error) {
         showSnackbar("Senha incorreta.", "error");
+      } finally {
+        setLoadingParticipant(false);
       }
     }
     handleDeleteParticipantDialogClose();
@@ -281,7 +277,9 @@ const EventDetails: React.FC = () => {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDeleteParticipantDialogClose}>Cancelar</Button>
-          <Button onClick={handleDeleteParticipantConfirmed}>Apagar</Button>
+          <Button onClick={handleDeleteParticipantConfirmed}>
+            {loadingParticipant ? <CircularProgress size={24} /> : "Apagar"}
+          </Button>
         </DialogActions>
       </Dialog>
       <Dialog open={isDeleteDialogOpen} onClose={handleDeleteDialogClose}>
@@ -309,7 +307,7 @@ const EventDetails: React.FC = () => {
               handleDeleteEventConfirmed();
             }}
           >
-            Apagar
+            {loading ? <CircularProgress size={24} /> : "Apagar"}
           </Button>
         </DialogActions>
       </Dialog>
