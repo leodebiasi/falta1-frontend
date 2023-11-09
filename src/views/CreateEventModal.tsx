@@ -130,7 +130,6 @@ const CreateEventModal: React.FC<StyledModalProps> = ({
             onChange={handleChange}
           />
           <TextField
-            autoFocus
             margin="dense"
             id="modality"
             label="Modalidade"
