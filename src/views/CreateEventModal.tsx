@@ -177,15 +177,6 @@ const CreateEventModal: React.FC<StyledModalProps> = ({
           />
           <TextField
             margin="dense"
-            id="image"
-            label="URL da Imagem"
-            type="url"
-            fullWidth
-            value={eventData.image}
-            onChange={handleChange}
-          />
-          <TextField
-            margin="dense"
             id="password"
             label="Senha para Editar/Apagar"
             type="password"

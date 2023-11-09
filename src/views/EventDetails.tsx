@@ -396,17 +396,6 @@ const EventDetails: React.FC = () => {
                   my: 2,
                 }}
               >
-                <Box
-                  component="img"
-                  src="/image_detail.png"
-                  alt="Evento"
-                  sx={{
-                    width: "50%",
-                    maxWidth: 300,
-                    borderRadius: 2,
-                    marginRight: "auto",
-                  }}
-                />
                 <Button
                   variant="contained"
                   color="secondary"

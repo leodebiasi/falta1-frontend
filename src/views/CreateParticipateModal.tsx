@@ -144,7 +144,6 @@ const ParticipateModal: React.FC<ParticipateModalProps> = ({
             <QRCode value={brCode} />
             <Button
               variant="contained"
-              color="secondary"
               startIcon={<FileCopyIcon />}
               sx={{ mt: 2 }}
               onClick={() => {
